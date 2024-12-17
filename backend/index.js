@@ -69,6 +69,7 @@ app.use("/api", getLeaderboard);
 // Serve React Frontend Static Build
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+console.log('Frontend index.html path:', path.resolve(__dirname, "../frontend/dist/index.html"));
 
 // Serve React build folder from frontend
 app.use(express.static(path.join(__dirname, "../frontend/dist"))); // Ensure path to the frontend build folder is correct
