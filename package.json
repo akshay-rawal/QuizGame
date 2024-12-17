@@ -3,12 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "concurrently \"npm run start:frontend\" \"npm run start:backend\"",
-    "start:frontend": "npm run start --prefix frontend",  
-    "start:backend": "npm run start --prefix backend",    
+    "start:backend": "npm install --prefix backend && npm start --prefix backend",
+    "build:backend": "npm install --prefix backend && npm run build --prefix backend",
     "build": "concurrently \"npm run build:frontend\" \"npm run build:backend\"",
-    "build:frontend": "npm run build --prefix frontend",  
-    "build:backend": "npm run build --prefix backend",   
+    "build:frontend": "npm run build --prefix frontend",
     "deploy": "echo 'Nothing to deploy from root, deploy frontend and backend separately'"
   },
   "dependencies": {
@@ -18,7 +16,6 @@
     "gh-pages": "^6.2.0"
   },
   "engines": {
-  "node": ">=18.0.0"
-}
-
+    "node": ">=18.0.0"
+  }
 }
