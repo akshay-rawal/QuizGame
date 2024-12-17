@@ -17,7 +17,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 
 dotenv.config();
-
+console.log("MONGO_URL:", process.env.MONGO_URL); 
 const app = express();
 
 // CORS Configuration
@@ -37,6 +37,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // MongoDB Connection
 const mongoDb = async () => {
+  console.log("MONGO_URL:", process.env.MONGO_URL);
   try {
     await mongoose.connect(process.env.MONGO_URL);
     console.log("MongoDB connected successfully");
