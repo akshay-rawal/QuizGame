@@ -3,13 +3,13 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-"scripts": {
-  "start": "vite",
-  "build": "vite build",
-  "deploy": "gh-pages -d dist",
-  "lint": "eslint .",
-  "preview": "vite preview"
-},
+  "scripts": {
+    "start": "vite",
+    "build": "vite build",
+    "deploy": "gh-pages -d dist",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  },
   "dependencies": {
     "@reduxjs/toolkit": "^2.3.0",
     "axios": "^1.7.7",
@@ -39,8 +39,6 @@
     "vite": "^6.0.3"
   },
   "engines": {
-  "node": ">=18.0.0"
-}
-
-
+    "node": ">=18.0.0"
+  }
 }
