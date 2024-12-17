@@ -1,13 +1,12 @@
 {
   "scripts": {
-    "start": "npm run start:backend",
-    "start:backend": "npm install --prefix backend && npm install --prefix frontend && concurrently \"npm start --prefix backend\" \"npm run serve:frontend\"",
-    "serve:frontend": "npm run build --prefix frontend && node backend/server.js",
+    "start": "concurrently \"npm run start:backend\" \"npm run serve:frontend\"",
+    "start:backend": "cd backend && npm install && npm start",
+    "serve:frontend": "cd frontend && npm install && npm run build && node ../backend/index.js",
     "build": "npm run build:frontend && npm run build:backend",
-    "build:frontend": "npm install --prefix frontend && npm run build --prefix frontend",
-    "build:backend": "npm install --prefix backend && echo 'Backend build not needed'",
-    "deploy": "npm run build && echo 'Deploying both frontend and backend'",
-    "install:all": "npm install && npm install --prefix frontend && npm install --prefix backend"
+    "build:frontend": "cd frontend && npm install && npm run build",
+    "build:backend": "cd backend && npm install && echo 'Backend build not needed'",
+    "install:all": "npm install && cd frontend && npm install && cd ../backend && npm install"
   },
   "dependencies": {
     "concurrently": "^9.1.0"
