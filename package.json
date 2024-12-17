@@ -2,7 +2,7 @@
 "scripts": {
   "start": "concurrently \"npm run start:backend\" \"npm run serve:frontend\"",
   "start:backend": "cd backend && npm install && npm start",
-  "serve:frontend": "cd frontend && npm install && npm run build && node ../backend/index.js",
+  "serve:frontend": "cd frontend && npm install && npm install -g vite && npm run build && node ../backend/index.js",
   "build:frontend": "cd frontend && npm install && npm run build",
   "build:backend": "echo 'Backend build not needed'",
   "build": "npm run build:frontend && npm run build:backend",
