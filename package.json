@@ -1,17 +1,19 @@
 {
-  "scripts": {
-    "start": "concurrently \"npm run start:backend\" \"npm run serve:frontend\"",
-    "start:backend": "cd backend && npm install && npm start",
-    "serve:frontend":"cd frontend && npm install && npm run build && cd ../backend && node index.js",
-    "build": "npm run build:frontend && npm run build:backend",
-    "build:frontend": "cd frontend && npm install && npm run build",
-    "build:backend": "cd backend && npm install && echo 'Backend build not needed'",
-    "install:all": "npm install && cd frontend && npm install && cd ../backend && npm install"
-  },
+"scripts": {
+  "start": "concurrently \"npm run start:backend\" \"npm run serve:frontend\"",
+  "start:backend": "cd backend && npm install && npm start",
+  "serve:frontend": "cd frontend && npm install && npm run build && node ../backend/index.js",
+  "build:frontend": "cd frontend && npm install && npm run build",
+  "build:backend": "echo 'Backend build not needed'",
+  "build": "npm run build:frontend && npm run build:backend",
+  "install:all": "npm install && cd frontend && npm install && cd ../backend && npm install"
+},
+
   "dependencies": {
     "concurrently": "^9.1.0"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=18.0.0",
+     "npm": ">=10.0.0"
   }
 }
