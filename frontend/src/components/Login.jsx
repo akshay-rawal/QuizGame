@@ -22,7 +22,7 @@ function Login() {
         email,
       });
       console.log("API Response:", response.data);
-      const { user, token } = response.data;
+      const { user, accessToken } = response.data;
       // Check if user and token exist in the response
       if (response.data && response.data.user && response.data.token) {
 
