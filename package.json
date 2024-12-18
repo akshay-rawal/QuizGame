@@ -2,8 +2,8 @@
   "scripts": {
     "start": "concurrently \"npm run start:backend\" \"npm run serve:frontend\"",
    "start:backend": "cd backend && cross-env NODE_ENV=development npm install && npm start",
-    "serve:frontend": "cd frontend && npm install && npm run build",
-    "build:frontend": "cd frontend && npm install && npm run build",
+    "serve:frontend": "cd frontend && npm install && npx vite build",
+    "build:frontend": "cd frontend && npm install && npx vite build",
     "build:backend": "echo 'Backend build not needed'",
     "build": "npm run build:frontend && npm run build:backend",
     "install:all": "npm install && cd frontend && npm install && cd ../backend && npm install"
