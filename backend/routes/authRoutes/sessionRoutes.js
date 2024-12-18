@@ -4,6 +4,28 @@ import authenticate from "../../middleware/authenticate.js";
 
 const router = express.Router();
 
+
+router.get('/refresh',authenticate,async (req,res)=>{
+  const refreshToken = req.cookies.refreshToken
+
+  if (!refreshToken) {
+    return res.status(403).json({ message: "No refresh token found" });
+  }
+  try {
+    // Verify the refresh token
+    const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+    const user = await User.findById(decoded.userId);
+    if (!user) {
+      return res.status(403).json({ message: "Invalid refresh token" });
+    }
+    const newAccessToken = jwt.sign({userId:user._id},process.env.JWT_SECRET,{expiresIn:'1h'})
+    res.status(200).json({ accessToken: newAccessToken });
+  } catch (error) {
+    console.error('Error refreshing token:', error.message);
+    res.status(403).json({ message: "Invalid refresh token" });
+  }
+})
+
 router.get('/session',authenticate, async(req,res)=>{
      try {
            const userId = req.userId
