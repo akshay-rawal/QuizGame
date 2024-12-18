@@ -24,7 +24,7 @@ const app = express();
 app.use(
   cors({
     origin: [
-      "http://localhost:5173", // Local development frontend URL
+      "https://quizgame-9.onrender.com", // Deployed frontend URL
       "http://localhost:3000", // Optional for React dev server
       
     ],
