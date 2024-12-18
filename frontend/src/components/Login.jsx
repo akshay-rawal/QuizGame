@@ -27,7 +27,7 @@ function Login() {
       if (response.data && response.data.user && response.data.token) {
 
         // Dispatch the login action with the user and token
-        dispatch(login({  user: response.data.user, token: response.data.token,userId:user.userId}));
+        dispatch(login({  user, token:accessToken,userId:user.userId}));
 
 
         // Navigate to the home page after successful login
