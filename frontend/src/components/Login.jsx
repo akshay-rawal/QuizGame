@@ -25,8 +25,6 @@ function Login() {
       const { user, token } = response.data;
       // Check if user and token exist in the response
       if (response.data && response.data.user && response.data.token) {
-        localStorage.setItem('token', response.data.token);
-        console.log('Saving token to localStorage:', response.data.token);
 
         // Dispatch the login action with the user and token
         dispatch(login({  user: response.data.user, token: response.data.token,userId:user.userId}));

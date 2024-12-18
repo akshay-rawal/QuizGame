@@ -8,31 +8,47 @@ function SessionManager({ children }) {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    console.log("localstorage token",localStorage.getItem('token'));
-    
     const user = JSON.parse(localStorage.getItem('user'));
-
-    // If token exists in localStorage, try to restore the session
+  
     if (token && user) {
-      // Dispatch to restore session in Redux
       dispatch(login({ user, token, userId: user.userId }));
-      console.log('Session restored with user and token:', { user, token });
-
-      // Now verify session with API
+  
       api.get('/session')
         .then((response) => {
           console.log('Session is valid:', response.data);
         })
-        .catch((error) => {
+        .catch(async (error) => {
           console.error('Session validation failed:', error);
-          // If session is invalid, log the user out
-          dispatch(logout());
-          localStorage.clear();  // Optionally clear localStorage
+  
+          if (error.response?.status === 401) {
+            try {
+              const refreshResponse = await axios.post(
+                `${import.meta.env.VITE_API_URL}/auth/refresh`,
+                {},
+                { withCredentials: true }
+              );
+  
+              const newAccessToken = refreshResponse.data.accessToken;
+              localStorage.setItem('token', newAccessToken);
+  
+              // Retry session validation with the new token
+              const retryResponse = await api.get('/session');
+              console.log('Session is now valid after token refresh:', retryResponse.data);
+            } catch (refreshError) {
+              console.error('Failed to refresh token:', refreshError);
+              dispatch(logout());
+              localStorage.clear();
+            }
+          } else {
+            dispatch(logout());
+            localStorage.clear();
+          }
         });
     } else {
       console.warn('No token found. Skipping session restoration.');
     }
   }, [dispatch]);
+  
 
   return children;
 }

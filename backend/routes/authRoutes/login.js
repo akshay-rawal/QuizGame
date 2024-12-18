@@ -22,11 +22,22 @@ try {
       if (!userPassword) {
            return res.status(401).json({message:"password is incorrect"})
       }
+
+
    
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    const accessToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    const refreshToken = jwt.sign({userId:user._id},process.env.JWT_REFRESH_SECRET,{expiresIn:'7d'})
+
+    res.cookie('refreshToken',refreshToken,{
+      httpOnly:true,
+      secure:process.env.NODE_ENV==="production",
+      maxAge:7*24*60*60*1000,
+      sameSite:"strict"
+
+    })
 
       res.status(200).json({message:"login successfully",
-        token,
+        accessToken,
       user: {
         userId: user._id,
         username: user.username,

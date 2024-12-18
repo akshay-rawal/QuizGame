@@ -51,11 +51,10 @@ const userSlice = createSlice({
       state.user = null;
       state.token = null;
       state.userId = null;
-
-      // Clear session data from localStorage
-      localStorage.removeItem('user');
-      localStorage.removeItem('token');
     },
+    refreshToken:(state,action)=>{
+         state.token = action.payload.token;
+    }
   },
 });
 
