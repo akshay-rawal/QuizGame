@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { login,logout } from '../src/store/store';
-import api from './axios';
+import { login, logout } from '../store/store';
+import axiosInstance from './axios';
 
 function SessionManager({ children }) {
   const dispatch = useDispatch();
@@ -13,35 +13,27 @@ function SessionManager({ children }) {
     if (token && user) {
       dispatch(login({ user, token, userId: user.userId }));
   
-      api.get('/session')
+      axiosInstance
+        .get('/auth/session')
         .then((response) => {
-          console.log('Session is valid:', response.data);
+          const { user, accessToken } = response.data;
+          if (user && accessToken) {
+            dispatch(login({ user, token: accessToken, userId: user.userId }));
+          } else {
+            throw new Error('Invalid session response.');
+          }
         })
         .catch(async (error) => {
-          console.error('Session validation failed:', error);
-  
           if (error.response?.status === 401) {
             try {
-              const refreshResponse = await axios.post(
-                `${import.meta.env.VITE_API_URL}/auth/refresh`,
-                {},
-                { withCredentials: true }
-              );
-  
+              const refreshResponse = await axiosInstance.get('/auth/refresh');
               const newAccessToken = refreshResponse.data.accessToken;
               localStorage.setItem('token', newAccessToken);
-  
-              // Retry session validation with the new token
-              const retryResponse = await api.get('/session');
-              console.log('Session is now valid after token refresh:', retryResponse.data);
+              dispatch(login({ user, token: newAccessToken, userId: user.userId }));
             } catch (refreshError) {
-              console.error('Failed to refresh token:', refreshError);
               dispatch(logout());
               localStorage.clear();
             }
-          } else {
-            dispatch(logout());
-            localStorage.clear();
           }
         });
     } else {

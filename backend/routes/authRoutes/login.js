@@ -8,6 +8,8 @@ router.post('/login',async (req,res)=>{
 
 try {
     const {email,password} = req.body;
+ 
+
     //check if the user exit in database
       const user = await User.findOne({email});
     if (!user) {
@@ -18,7 +20,7 @@ try {
 
       //compare entered password with the hashed password in the database
       const userPassword = await user.comparePassword(password);
-    
+      console.log('Password Match:', userPassword);
       if (!userPassword) {
            return res.status(401).json({message:"password is incorrect"})
       }
@@ -26,13 +28,17 @@ try {
 
    
     const accessToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-    const refreshToken = jwt.sign({userId:user._id},process.env.JWT_REFRESH_SECRET,{expiresIn:'7d'})
+   
+    const refreshToken = jwt.sign({userId:user._id},process.env.JWT_REFRESH_SECRET
+,{expiresIn:'7d'})
+    
+    
 
     res.cookie('refreshToken',refreshToken,{
       httpOnly:true,
-      secure:process.env.NODE_ENV==="production",
+      secure:true,
       maxAge:7*24*60*60*1000,
-      sameSite:"strict"
+      //sameSite:"strict"
 
     })
 

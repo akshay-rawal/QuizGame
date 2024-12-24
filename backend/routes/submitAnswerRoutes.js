@@ -69,6 +69,8 @@ export const submitAnswerRoutes = async (req, res) => {
 
     // Save the updated user score
     await userScore.save();
+
+    const hasAnswerd = userScore.answeredQuestions.includes(questionId)
     const pendingQuestions = userScore.pendingAnswer.length;
     const totalQuestions = userScore.totalQuestions;
 
@@ -82,6 +84,7 @@ export const submitAnswerRoutes = async (req, res) => {
       updatedScore:userScore.score,
       totalQuestions,
       pendingQuestions, 
+      hasAnswerd,
     }
   );
 

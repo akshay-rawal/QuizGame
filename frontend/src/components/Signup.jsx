@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "../../utills/axios";
+import axiosInstance from "../utills/axios";
 
 function Signup() {
     const [username, setUsername] = useState('');
@@ -11,7 +11,7 @@ function Signup() {
 
   const handleSignup = async ()=>{
 try {
-        const response = await api.post('/auth/signup',{
+        const response = await axiosInstance.post('/auth/signup',{
             username,
             email,
             password

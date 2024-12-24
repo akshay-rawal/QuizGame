@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { login } from '../store/store.js';
 import { useNavigate } from "react-router-dom";
-import api from "../../utills/axios.js";
+import axiosInstance from "../utills/axios.js";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -16,19 +16,29 @@ function Login() {
   const handleLogin = async (e) => {
     e.preventDefault(); 
     try {
-      const response = await api.post("auth/login", {
+      const response = await axiosInstance.post("auth/login", {
+     
         
         password,
         email,
       });
-      console.log("API Response:", response.data);
+      console.log("Email:", email);
+      console.log("Password:", password);
+      console.log("Login API Response:", response.data);
+      
       const { user, accessToken } = response.data;
+      console.log("token:",accessToken);
+      
       // Check if user and token exist in the response
-      if (response.data && response.data.user && response.data.token) {
+      if (user,accessToken) {
+        console.log("User:", user);
+        console.log("Token:", accessToken);
+  
 
         // Dispatch the login action with the user and token
         dispatch(login({  user, token:accessToken,userId:user.userId}));
-
+        localStorage.setItem('token', accessToken);
+        localStorage.setItem('user', JSON.stringify(user));
 
         // Navigate to the home page after successful login
         navigate("/home");
@@ -37,8 +47,10 @@ function Login() {
         alert("Login failed: Missing user or token in response");
       }
     } catch (error) {
-      alert(error.response?.data?.message || "An error occurred during login.");
-      
+      console.error("Error details:", error);
+      const errorMessage =
+        error.response?.data?.message || "An error occurred during login.";
+      alert(errorMessage);
     }
   };
   

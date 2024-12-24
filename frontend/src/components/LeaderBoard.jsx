@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import api from "../../utills/axios";
+import axiosInstance from "../utills/axios";
 import { useTheme } from "./ThemeContext";
 const Leaderboard = () => {
  
@@ -9,7 +9,7 @@ const Leaderboard = () => {
   // Function to fetch leaderboard data
   const fetchLeaderboard = async () => {
     try {
-      const response = await api.get("/leaderboard",
+      const response = await axiosInstance.get("/leaderboard",
        );
       setLeaderboard(response.data.leaderboard);
     } catch (error) {

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import api from "../../utills/axios";
+import axiosInstance from "../utills/axios";
 import { useSelector } from "react-redux";
 import { useTheme } from "./ThemeContext";
 
@@ -28,7 +28,7 @@ function CategoryPage() {
     try {
       setLoading(true);
 
-      const questionsResponse = await api.get(
+      const questionsResponse = await axiosInstance.get(
         `/questions/${category}/${user.userId}`,
         { params: { page: currentPage, limit: 5 } }
       );
@@ -41,7 +41,7 @@ function CategoryPage() {
         setError("Failed to load questions.");
       }
 
-      const scoreResponse = await api.get(`/user-score/${user.userId}/${category}`);
+      const scoreResponse = await axiosInstance.get(`/user-score/${user.userId}/${category}`);
       if (scoreResponse.data.userScore) {
         const { score, correctAnswer, inCorrectAnswer, answeredQuestions, pendingAnswer } = scoreResponse.data.userScore;
         setScore(score || 0);
@@ -88,16 +88,16 @@ function CategoryPage() {
     }
 
     try {
-      const response = await api.post("/submit", {
+      const response = await axiosInstance.post("/submit", {
         userId: user.userId,
         questionId,
         selectedOption,
       });
 
-      const { isCorrect, updatedScore, feedbackMessage, pendingQuestions, pendingAnswerCount, totalQuestions } = response.data;
+      const { isCorrect, updatedScore, feedbackMessage, pendingQuestions, pendingAnswerCount, totalQuestions,hasAnswerd } = response.data;
 
       setFeedback((prev) => ({ ...prev, [questionId]: feedbackMessage }));
-      setSubmittedAnswers((prev) => ({ ...prev, [questionId]: selectedOption }));
+      setSubmittedAnswers((prev) => ({ ...prev, [questionId]: {submitted:hasAnswerd,clicked:false}}));
       setScore(updatedScore);
       setCorrectAnswers((prev) => (isCorrect ? [...prev, questionId] : prev));
       setIncorrectAnswers((prev) => (!isCorrect ? [...prev, questionId] : prev));
@@ -107,13 +107,23 @@ function CategoryPage() {
       setFeedback((prev) => ({ ...prev, [questionId]: "There was an error submitting your answer." }));
     }
   };
-
   const handleShowAnswer = (questionIndex) => {
+    const questionId = questions[questionIndex]._id;
+  
+    // Toggle the "show answer" state and mark the button as clicked
     setShowAnswers((prev) => ({
       ...prev,
-      [questionIndex]: !prev[questionIndex],
+      [questionIndex]: true, // Show the answer
+    }));
+    setSubmittedAnswers((prev) => ({
+      ...prev,
+      [questionId]: {
+          ...prev[questionId],
+        clicked: true, // Disable the button after clicking
+      },
     }));
   };
+  
 
   return (
     <div className={`p-6 min-h-screen ${isDark ? 'bg-gray-900 text-white' : 'bg-gray-50 text-black'} flex flex-col sm:flex-wrap`}>
@@ -153,31 +163,44 @@ function CategoryPage() {
                     );
                   })}
                 </div>
-                <button
-                  onClick={() => {
-                    const selectedOption = selectedAnswers[question._id];
-                    if (selectedOption) {
-                      handleSubmit(index, selectedOption);
-                    } else {
-                      alert("Please select an option before submitting");
-                    }
-                  }}
-                  className={`mt-4 px-4 py-2 rounded ${isAnswered ? "bg-gray-400 text-gray-700 cursor-not-allowed" : "bg-blue-600 text-white hover:bg-blue-700"}`}
-                  disabled={isAnswered}
-                >
-                  Submit
-                </button>
+                <div className="flex items-center">
+  {/* Submit Button */}
+  <button
+    onClick={() => {
+      const selectedOption = selectedAnswers[question._id];
+      if (selectedOption) {
+        handleSubmit(index, selectedOption); // Call handleSubmit
+      } else {
+        alert("Please select an option before submitting");
+      }
+    }}
+    className={`mt-4 px-4 py-2 rounded ${
+      submittedAnswers[question._id]?.submitted
+        ? `bg-gray-400 ${isDark ? "text-black" : "text-gray-700"} cursor-not-allowed` // Gray and disabled if already submitted
+        : "bg-blue-600 text-white hover:bg-blue-700" // Active if not submitted
+    }`}
+    disabled={submittedAnswers[question._id]?.submitted} // Disable if already submitted
+  >
+    Submit
+  </button>
 
-                <button
-                  onClick={() => handleShowAnswer(index)}
-                  className={`ml-4 px-4 py-2 rounded ${submittedAnswers[question._id] ? "bg-gray-300 text-gray-500 cursor-not-allowed" : 
-                    `${isDark ? "bg-gray-400 text-black hover:bg-gray-300" : "bg-gray-200 dark:bg-gray-800 dark:text-white hover:bg-gray-300"}`
-                  }`}
-                  disabled={submittedAnswers[question._id]}
-                >
-                  {showAnswers[index] ? "Hide Answer" : "Show Answer"}
-                </button>
-                <span className="ml-4 text-blue-600 font-medium">{feedback[question._id]}</span>
+  {/* Show Answer Button */}
+  <button
+    onClick={() => handleShowAnswer(index)}
+    className={`ml-4 px-4 py-2 rounded ${
+      submittedAnswers[question._id]?.submitted && !submittedAnswers[question._id]?.clicked
+        ? "bg-blue-600 text-white hover:bg-blue-700" // Blue and active if submitted but not clicked
+        : `bg-gray-400 ${isDark ? "text-black" : "text-gray-700"} cursor-not-allowed` // Gray and disabled otherwise
+    }`}
+    disabled={!submittedAnswers[question._id]?.submitted || submittedAnswers[question._id]?.clicked} // Disable if not submitted or already clicked
+  >
+    {showAnswers[index] ? "Hide Answer" : "Show Answer"}
+  </button>
+
+  {/* Feedback */}
+  <span className="ml-4 text-blue-600 font-medium">{feedback[question._id]}</span>
+</div>
+
 
                 {showAnswers[index] && (
                   <div className="mt-2">
