@@ -23,10 +23,7 @@ router.get("/questions/:category/:userId",authenticate, async (req, res) => {
   const { category,userId} = req.params;
   const page = parseInt(req.query.page)||1;
   const limit = parseInt(req.query.limit) || 5;
-  console.log("User ID from token:", req.userId);
-  console.log("Requested User ID:", userId);
-  console.log("Category requested:", category);
-  
+
 
   if (req.userId !== userId) {
     return res.status(403).json({ message: "You are not authorized to access these questions." });
@@ -35,7 +32,6 @@ router.get("/questions/:category/:userId",authenticate, async (req, res) => {
   try {
     let userScore = await Score.findOne({ category, userId });
     if (!userScore) {
-      console.log("No user score found, initializing score...");
       userScore = await initializeUserScore(userId, category);
       // Save the initialized user score to the database
       await userScore.save();
@@ -64,7 +60,6 @@ router.get("/questions/:category/:userId",authenticate, async (req, res) => {
   return res.status(200).json({ questions: questionsWithStatus, pendingAnswerCount, totalQuestions, totalPages: Math.ceil(totalQuestions / limit), currentPage: page });
 
   } catch (error) {
-    console.error("Error fetching questions:", error);
     return res.status(500).json({ message: "Error fetching questions from the database." });
   }
 }); 

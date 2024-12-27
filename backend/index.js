@@ -16,9 +16,8 @@
   import cookieParser from 'cookie-parser';
   import refreshRoutes from './routes/authRoutes/refreshRoutes.js'
   import deleteQuestion from './routes/question/deleteQuestion.js'
-
+   import themeRoutes from './routes/themeContext.js'
   dotenv.config();
-  console.log("MONGO_URL:", process.env.MONGO_URL); 
   const app = express();
 
   // CORS Configuration
@@ -38,7 +37,7 @@
     })
   );
   app.use((req, res, next) => {
-    console.log("Incoming Request Headers:", req.headers);
+  
     next();
   });
   
@@ -51,9 +50,9 @@
     console.log("MONGO_URL:", process.env.MONGO_URL);
     try {
       await mongoose.connect(process.env.MONGO_URL);
-      console.log("MongoDB connected successfully");
+      console.log("MongoDB connected successfully")
     } catch (error) {
-      console.error("MongoDB connection failed", error);
+      
       process.exit(1); // Exit the process if MongoDB fails to connect
     }
   };
@@ -73,7 +72,9 @@
   app.use("/api", userScore);
   app.use("/api", submitAnswerRoutes);
   app.use("/api", getLeaderboard);
-  app.use('/api',deleteQuestion)
+  app.use('/api',deleteQuestion);
+  app.use('/api',themeRoutes);
+
 
   // Serve React Frontend Static Build
   

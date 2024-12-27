@@ -46,6 +46,7 @@ const userSlice = createSlice({
       // Persist session data in localStorage
       localStorage.setItem('user', JSON.stringify(user));
       localStorage.setItem('token', token);
+      localStorage.setItem("userId",user.userId)
     },
     logout: (state) => {
       state.user = null;

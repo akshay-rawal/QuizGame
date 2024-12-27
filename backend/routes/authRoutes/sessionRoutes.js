@@ -24,7 +24,6 @@ router.get('/session', authenticate, async (req, res) => {
       }, 
       accessToken: req.token  });
   } catch (error) {
-    console.error('Error validating session:', error.message);
     res.status(500).json({ message: "Failed to fetch session.", error: error.message });
   }
 });

@@ -74,8 +74,7 @@ export const submitAnswerRoutes = async (req, res) => {
     const pendingQuestions = userScore.pendingAnswer.length;
     const totalQuestions = userScore.totalQuestions;
 
-    console.log("Pending Questions:", pendingQuestions);
-    console.log("Total Questions:", userScore.totalQuestions);
+ 
   
     return res.status(200).json({
       message: "Answer submitted successfully.",
@@ -89,7 +88,6 @@ export const submitAnswerRoutes = async (req, res) => {
   );
 
   } catch (error) {
-    console.error("Error submitting answer:", error);
     return res.status(500).json({ message: "Error submitting answer." });
   }
 };

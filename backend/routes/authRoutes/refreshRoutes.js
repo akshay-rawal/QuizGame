@@ -10,7 +10,6 @@
 
 router.get('/refresh', async (req,res)=>{
     const refreshToken = req.cookies.refreshToken
-    console.log('Incoming Refresh Token:', req.cookies.refreshToken);
 
 
     if (!refreshToken) {
@@ -26,7 +25,6 @@ router.get('/refresh', async (req,res)=>{
       const newAccessToken = jwt.sign({userId:user._id},process.env.JWT_SECRET,{expiresIn:'1h'})
       res.status(200).json({ accessToken: newAccessToken });
     } catch (error) {
-      console.error('Error refreshing token:', error.message);
       res.status(403).json({ message: "Invalid refresh token" });
     }
   })

@@ -2,7 +2,6 @@ import jwt from 'jsonwebtoken';
 
 const authenticate = (req, res, next) => {
     const authHeader = req.header("Authorization");
-    console.log('Authorization Header:', authHeader);
 
     if (!authHeader || !authHeader.startsWith("Bearer")) {
         return res.status(401).json({ message: "Access denied. Invalid token format." });
@@ -17,14 +16,12 @@ const authenticate = (req, res, next) => {
     try {
         console.log("Verifying token:", token);
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        console.log('Decoded Token:', decoded);
 
 
         req.token = token; // Set the token on the request object
 
         req.user = decoded
         req.userId = decoded.userId; // Attach userId to the request object
-        console.log('User ID attached to req:', req.userId);
 
         next();
     } catch (err) {
@@ -34,7 +31,6 @@ const authenticate = (req, res, next) => {
             return res.status(401).json({ message: "Invalid token. Please log in again." });
         }
 
-        console.error('Token Verification Error:', err);
         return res.status(500).json({ message: "An error occurred while verifying the token.", error: err.message });
     }
 };

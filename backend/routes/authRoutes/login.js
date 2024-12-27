@@ -1,6 +1,7 @@
 import express from 'express';
 import User from '../../models/userSchema.js';
 import jwt from "jsonwebtoken"
+import ThemePreference from '../../models/themeSchema.js';
   
 const router = express.Router();
 
@@ -20,7 +21,6 @@ try {
 
       //compare entered password with the hashed password in the database
       const userPassword = await user.comparePassword(password);
-      console.log('Password Match:', userPassword);
       if (!userPassword) {
            return res.status(401).json({message:"password is incorrect"})
       }
@@ -41,9 +41,20 @@ try {
       //sameSite:"strict"
 
     })
+    const themePreference = await ThemePreference.findOneAndUpdate(
+      
+      { userId: user._id },
+      
+      
+      { $setOnInsert: { isDark: false,userId: user._id  } }, // Default to light mode if not already set
+      { upsert: true, new: true }
+  );console.log("Theme Preference:", themePreference);
+
+
+
 
       res.status(200).json({message:"login successfully",
-        accessToken,
+        accessToken,themePreference,
       user: {
         userId: user._id,
         username: user.username,
