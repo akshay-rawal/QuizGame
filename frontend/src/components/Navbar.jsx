@@ -12,6 +12,8 @@ function Navbar() {
 
     const handleLogout = () => {
         dispatch(logout());
+        localStorage.removeItem('isDark'); // Reset theme
+
         navigate('/');
     };
 

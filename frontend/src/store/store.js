@@ -52,6 +52,9 @@ const userSlice = createSlice({
       state.user = null;
       state.token = null;
       state.userId = null;
+      localStorage.removeItem('user');
+      localStorage.removeItem('token');
+      localStorage.removeItem('userId');
     },
     refreshToken:(state,action)=>{
          state.token = action.payload.token;

@@ -4,32 +4,32 @@ import { login } from '../store/store.js';
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../utills/axios.js";
 
+
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);  // Loading state to show user feedback
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+
+  
   const handleLogin = async (e) => {
+    
     e.preventDefault();
+    setLoading(true);  // Set loading state to true when login starts
+
     try {
       const response = await axiosInstance.post("auth/login", {
-        email,        // Pass the email and password to the API correctly
+        email,
         password,
       });
-      console.log("Login API Response:", response.data);
-      
+
       const { user, accessToken } = response.data;
-      console.log("token:", accessToken);
-
       if (user && accessToken) {
-        console.log("User:", user);
-        console.log("Token:", accessToken);
-
         dispatch(login({ user, token: accessToken, userId: user.userId }));
         localStorage.setItem('token', accessToken);
         localStorage.setItem('user', JSON.stringify(user));
-        localStorage.setItem("userId", user.userId);
 
         navigate("/home");
       } else {
@@ -39,6 +39,8 @@ function Login() {
       console.error("Error details:", error);
       const errorMessage = error.response?.data?.message || "An error occurred during login.";
       alert(errorMessage);
+    } finally {
+      setLoading(false);  // Set loading state to false after the request is finished
     }
   };
 
@@ -50,22 +52,29 @@ function Login() {
           <input
             type="email"
             placeholder="Email"
+            id="email"
+            autoComplete="email"
+            name="email"
             className="w-full p-2 border border-gray-300 rounded mb-4"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}  // Ensure this updates the state correctly
+            onChange={(e) => setEmail(e.target.value)}
           />
           <input
             type="password"
-            placeholder="Password"
+            id="password"
+            name="password"
+            autoComplete="current-password"
+            placeholder="Enter your Password"
             className="w-full p-2 border border-gray-300 rounded mb-4"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}  // Ensure this updates the state correctly
+            onChange={(e) => setPassword(e.target.value)}
           />
           <button
             type="submit"
-            className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
+            className={`w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+            disabled={loading}  // Disable button when loading
           >
-            Login
+            {loading ? 'Logging in...' : 'Login'}
           </button>
           <p className="mt-4 text-center">
             Don't have an account?{" "}
