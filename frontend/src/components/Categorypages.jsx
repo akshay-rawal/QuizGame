@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import axiosInstance from "../utills/axios";
 import { useSelector } from "react-redux";
 import { useTheme } from "./ThemeContext";
+import ProtectedRoute from "../guestUser/protectedRoutes";
 
 function CategoryPage() {
   const { token, user } = useSelector((state) => state.user);
@@ -47,7 +48,7 @@ function CategoryPage() {
         setScore(score || 0);
         setCorrectAnswers(correctAnswer || []);
         setIncorrectAnswers(inCorrectAnswer || []);
-        setPendingQuestions(pendingAnswer.length || []);
+        setPendingQuestions(pendingAnswer.length || 0);
         setAnsweredQuestions(answeredQuestions || []);
 
         const feedbackMap = {};
@@ -101,7 +102,7 @@ function CategoryPage() {
       setScore(updatedScore);
       setCorrectAnswers((prev) => (isCorrect ? [...prev, questionId] : prev));
       setIncorrectAnswers((prev) => (!isCorrect ? [...prev, questionId] : prev));
-      setPendingQuestions(pendingQuestions);
+      setPendingQuestions(pendingQuestions||0);
       setQuestions((prev) => prev.map((q) => (q._id === questionId ? { ...q } : q)));
     } catch (error) {
       setFeedback((prev) => ({ ...prev, [questionId]: "There was an error submitting your answer." }));
@@ -126,12 +127,13 @@ function CategoryPage() {
   
 
   return (
+   <ProtectedRoute ProtectedRoute>
     <div
   className={`p-6 min-h-screen ${
     isDark ? "bg-gray-900 text-white" : "bg-gray-50 text-black"
   } flex flex-col sm:flex-wrap`}
 >
-  <h2 className="text-2xl sm:text-2xl font-bold mb-6 text-center text-blue-700">
+  <h2 className={`text-2xl sm:text-2xl font-bold mb-6 text-center ${isDark? 'text-white' : 'text-black'}`}>
     Questions for {category}
   </h2>
   {loading && (
@@ -229,7 +231,7 @@ function CategoryPage() {
             </div>
 
             {/* Feedback */}
-            <span className="text-blue-600 font-medium mt-2">
+            <span className={`font-medium mt-2 ${isDark? 'text-white':'text-black'}`}>
               {feedback[question._id]}
             </span>
 
@@ -283,6 +285,7 @@ function CategoryPage() {
     </p>
   </div>
 </div>
+</ProtectedRoute>
   );
 }
 

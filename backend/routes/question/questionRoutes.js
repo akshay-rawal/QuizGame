@@ -56,7 +56,7 @@ router.get("/questions/:category/:userId",authenticate, async (req, res) => {
     ...q._doc, // Spread original question data
     isAnswered: answeredQuestionIds.includes(q._id.toString()), // Add isAnswered flag
   }));
-  const pendingAnswerCount = userScore.pendingAnswer ? userScore.pendingAnswer.length : 0;
+  const pendingAnswerCount = (userScore.pendingAnswer && userScore.pendingAnswer.length) || 0;
   return res.status(200).json({ questions: questionsWithStatus, pendingAnswerCount, totalQuestions, totalPages: Math.ceil(totalQuestions / limit), currentPage: page });
 
   } catch (error) {

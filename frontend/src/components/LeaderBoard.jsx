@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axiosInstance from "../utills/axios";
 import { useTheme } from "./ThemeContext";
+import ProtectedRoute from "../guestUser/protectedRoutes";
 const Leaderboard = () => {
  
     const {isDark} = useTheme();
@@ -22,13 +23,14 @@ const Leaderboard = () => {
   }, []);
 
   return (
+    <ProtectedRoute>
     <div className={`p-6 min-h-screen ${isDark ? 'bg-gray-900 text-white' : 'bg-gray-50 text-black'}`}>
-    <h2 className="text-2xl font-bold mb-6 text-center text-blue-700">
+    <h2 className={`text-2xl font-bold mb-6 text-center ${isDark ? 'bg-gray-900 text-white' : 'bg-gray-50 text-black'}`}>
       Leaderboard
     </h2>
     <table className={`min-w-full table-auto shadow-md rounded-lg  max-w-full overflow-x-auto ${isDark ? 'bg-gray-900 text-white' : 'bg-gray-50 text-black'}`}>
       <thead>
-        <tr className={`bg-gray-200 text-left ${isDark ? 'bg-gray-50 text-black' : 'bg-gray-50 text-black'} `}>
+        <tr className={`bg-gray-200 text-left ${isDark ? 'bg-gray-700 text-white' : 'bg-gray-300 text-black'} `}>
           <th className="px-4 py-2  text-sm sm:text-base">Category</th>
           <th className="px-4 py-2  text-sm sm:text-base">Total Score</th>
           <th className="px-4 py-2  text-sm sm:text-base">Correct Answers</th>
@@ -59,7 +61,7 @@ const Leaderboard = () => {
       </tbody>
     </table>
   </div>
-  
+  </ProtectedRoute>
   );
 };
 

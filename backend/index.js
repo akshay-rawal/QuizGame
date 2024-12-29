@@ -17,6 +17,7 @@
   import refreshRoutes from './routes/authRoutes/refreshRoutes.js'
   import deleteQuestion from './routes/question/deleteQuestion.js'
    import themeRoutes from './routes/themeContext.js'
+   import guestUsers from './routes/guestUser/guestUsers.js'
   dotenv.config();
   const app = express();
 
@@ -74,7 +75,7 @@
   app.use("/api", getLeaderboard);
   app.use('/api',deleteQuestion);
   app.use('/api',themeRoutes);
-
+  app.use('/api',guestUsers)
 
   // Serve React Frontend Static Build
   

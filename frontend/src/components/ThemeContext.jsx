@@ -6,53 +6,45 @@ const ThemeContext = createContext();
 
 export const ThemeProvider = ({ children }) => {
     const [isDark, setIsDark] = useState(() => {
-        const savedTheme = localStorage.getItem("isDark");
-        const token = localStorage.getItem("token"); // Check for token
-        return token && savedTheme !== null ? JSON.parse(savedTheme) : false;
+        // Load theme from localStorage or default to light
+        const storedTheme = localStorage.getItem("isDark");
+        return storedTheme !== null ? JSON.parse(storedTheme) : null;
     });
-    
+    const [isThemeLoaded, setIsThemeLoaded] = useState(false);
+    const { user, token } = useSelector((state) => state.user);
 
-    const { user, token } = useSelector((state) => state.user); // Access user and token from Redux
-
-    // Fetch theme from the server if the user is logged in
+    // Fetch theme from backend after login/signup or user changes
     useEffect(() => {
-        if (!token || !user?.userId) {
-            console.warn("User not logged in, skipping theme fetch");
-            return; // Skip theme fetch if user is not logged in
-        }
+        const fetchTheme = async () => {
+            if (!token || !user?.userId) {
+                setIsThemeLoaded(true); // No user, consider theme loaded
+                return;
+            }
 
-        const userId = user.userId;
+            try {
+                const response = await axiosInstance.get(`/theme/${user.userId}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+                const themePreference = response.data.isDark;
+                setIsDark(themePreference); // Set theme from backend
+                localStorage.setItem("isDark", JSON.stringify(themePreference)); // Sync with localStorage
+            } catch (error) {
+                console.error("Error fetching theme:", error);
+            } finally {
+                setIsThemeLoaded(true); // Mark theme as loaded
+            }
+        };
 
-        // Fetch the theme from the server when logged in
-        axiosInstance
-            .get(`/theme/${userId}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            })
-            .then((response) => {
-                const theme = response.data.isDark;
-                setIsDark(theme); // Update the theme state
-
-                // Sync with localStorage to prevent conflicts
-                localStorage.setItem("isDark", JSON.stringify(theme));
-            })
-            .catch((error) => {
-                console.error("Error fetching theme preference:", error);
-            });
+        fetchTheme();
     }, [user, token]);
 
-    // Update the theme on the DOM and server
+    // Apply the theme to the DOM
     useEffect(() => {
-        if (!token || !user?.userId) {
-            console.warn("User not logged in, skipping theme update.");
-            return; // Prevent theme update if user isn't logged in
-        }
-    
-        const userId = user.userId;
+        if (isDark === null) return; // Avoid applying theme before it is set
+
         const body = document.body;
-    
-        // Apply the theme to the DOM
         if (isDark) {
             body.classList.add("bg-gray-800", "text-white");
             body.classList.remove("bg-white", "text-black");
@@ -60,32 +52,40 @@ export const ThemeProvider = ({ children }) => {
             body.classList.add("bg-white", "text-black");
             body.classList.remove("bg-gray-800", "text-white");
         }
-    
-        // Save theme preference to localStorage
-        localStorage.setItem("isDark", JSON.stringify(isDark));
-    
-        // Update the server with the current theme
-        const payload = { userId, isDark };
-        axiosInstance
-            .post("/theme", payload, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            })
-            .then(() => console.log("Theme preference updated successfully."))
-            .catch((error) => {
-                console.error("Error saving theme preference:", error);
-            });
-    }, [isDark, token, user]);
-    
+    }, [isDark]);
 
-    // Toggle theme function
-    const toggleTheme = () => {
-        setIsDark((prev) => !prev); // Toggle the theme
+    // Toggle theme and update backend
+    const toggleTheme = async () => {
+        const newTheme = !isDark;
+        setIsDark(newTheme);
+        localStorage.setItem("isDark", JSON.stringify(newTheme)); // Save new theme to localStorage
+
+        if (token && user?.userId) {
+            try {
+                await axiosInstance.post(
+                    "/theme",
+                    { userId: user.userId, isDark: newTheme },
+                    { headers: { Authorization: `Bearer ${token}` } }
+                );
+                console.log("Theme preference saved.");
+            } catch (error) {
+                console.error("Error saving theme preference:", error);
+            }
+        }
+    };
+      // Reset theme on logout
+      const resetTheme = () => {
+        setIsDark(false); // Reset to light mode
+        localStorage.removeItem("isDark");
     };
 
+    if (!isThemeLoaded) {
+        // Prevent rendering until the theme is resolved
+        return <div className="loading-screen">Loading...</div>;
+    }
+
     return (
-        <ThemeContext.Provider value={{ isDark, toggleTheme }}>
+        <ThemeContext.Provider value={{ isDark, toggleTheme ,resetTheme}}>
             {children}
         </ThemeContext.Provider>
     );

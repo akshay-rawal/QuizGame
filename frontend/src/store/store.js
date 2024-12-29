@@ -18,7 +18,8 @@ console.log('Parsed initial token:', initialToken);
 
 // Initial state for the user slice
 const initialState = {
-  user: initialUser,
+  user: initialUser || null,  // No guest user here
+  role: initialUser ? 'user' : 'guest', // Default to guest if no user
   token: initialToken,
   userId: initialUser?.userId || null,
 };
@@ -42,34 +43,51 @@ const userSlice = createSlice({
       state.user = user;
       state.token = token;
       state.userId = user.userId || null;
+      state.role = 'user';  // Set role to 'user' when logged in
 
       // Persist session data in localStorage
       localStorage.setItem('user', JSON.stringify(user));
       localStorage.setItem('token', token);
-      localStorage.setItem("userId",user.userId)
+      localStorage.setItem('userId', user.userId);
+      localStorage.setItem('role', 'user');  // Store role as 'user'
     },
     logout: (state) => {
       state.user = null;
       state.token = null;
       state.userId = null;
+      state.role = 'guest'; // Set role to 'guest' when logged out
+
       localStorage.removeItem('user');
       localStorage.removeItem('token');
       localStorage.removeItem('userId');
+      localStorage.removeItem('role'); // Remove role from localStorage
+      localStorage.removeItem('isDark');
     },
-    refreshToken:(state,action)=>{
-         state.token = action.payload.token;
+    refreshToken: (state, action) => {
+      state.token = action.payload.token;
+    },
+    setGuest: (state) => {
+      // Set guest user data without persisting in localStorage
+      state.user = {
+        userId: 'guest-' + Date.now(),  // Temporary unique ID for guest
+        username: 'Guest User',
+        role: 'guest',
+      };
+      state.token = null; // No token for guest
+      state.userId = state.user.userId;
+      state.role = 'guest'; // Set role to 'guest'
     }
   },
 });
 
 // Export actions
-export const { login, logout } = userSlice.actions;
+export const { login, logout, setGuest } = userSlice.actions;
 
 // Configure and export the store
 const store = configureStore({
   reducer: {
     user: userSlice.reducer,
   },
-}); 
+});
 
 export default store;

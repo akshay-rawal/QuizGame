@@ -28,7 +28,7 @@ const {isDark} = useTheme();
             } p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow cursor-pointer transform hover:scale-105`} 
             onClick={() => handleCategorySelect(category)}
           >
-            <h2 className=" tip text-xl font-bold mb-4 text-center dark:text-blue-400">
+            <h2 className={`text-xl font-bold mb-4 text-center ${isDark ? ' text-white' : ' text-black'}`}>
               {category}
             </h2>
             <p className={` text-center ${
