@@ -18,6 +18,8 @@
   import deleteQuestion from './routes/question/deleteQuestion.js'
    import themeRoutes from './routes/themeContext.js'
    import guestUsers from './routes/guestUser/guestUsers.js'
+   import path from "path"
+   
   dotenv.config();
   const app = express();
 
@@ -25,7 +27,7 @@
   app.use(
     cors({
       origin: [
-
+       " https://quizgame-8.onrender.com",
         "http://localhost:4001", // Optional for React dev server
         "http://localhost:5173",
         
@@ -80,8 +82,13 @@
   // Serve React Frontend Static Build
   
 
-  // Serve React build folder from frontend
-  
+// Serve Static Files for Frontend
+const __dirname = path.resolve();
+app.use(express.static(path.join(__dirname, "public")));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
+});  
 
   // Port and Host Configuration
   const port = process.env.PORT || 4001;
