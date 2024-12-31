@@ -4,7 +4,7 @@
     "start:backend": "cd backend && cross-env NODE_ENV=production PORT=4001 node index.js",
     "build": "npm run build:frontend", 
     "build:frontend": "cd frontend && npm install && npm run build", 
-    "serve:frontend": "cd frontend && npm run preview" 
+    "serve:frontend": "cd frontend && npm run preview"
   },
   "dependencies": {
     "concurrently": "^9.1.0",
