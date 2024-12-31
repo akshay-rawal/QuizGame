@@ -19,12 +19,11 @@ import deleteQuestion from './routes/question/deleteQuestion.js';
 import themeRoutes from './routes/themeContext.js';
 import guestUsers from './routes/guestUser/guestUsers.js';
 import path from "path";
+import { fileURLToPath } from "url";
 
 // Utility to get __dirname in ES module scope
-const getDirname = (importMetaUrl) => {
-  return path.dirname(decodeURIComponent(new URL(importMetaUrl).pathname)).substring(1);
-};
-
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 dotenv.config();
 
@@ -78,22 +77,21 @@ app.use('/api', themeRoutes);
 app.use('/api', guestUsers);
 
 // Serve React Frontend Static Build
-const __dirname = getDirname(import.meta.url);
+const frontendPath = path.join(__dirname, "../frontend/dist");
 
-// Serve static files from the frontend/dist directory
-app.use(express.static(path.join(__dirname,"..", "frontend", "dist")));
+app.use(express.static(frontendPath));
 
 // Serve index.html for all unmatched routes
 app.get("*", (req, res) => {
-  const filePath = path.resolve(__dirname, "..","frontend", "dist", "index.html");
-  console.log("Serving file:", filePath);  // Debugging line to check the file path
-  res.sendFile(filePath, (err) => {
+  const indexPath = path.join(frontendPath, "index.html");
+  console.log("Serving file:", indexPath); // Debugging line to check the file path
+  res.sendFile(indexPath, (err) => {
     if (err) {
-      console.log("Error serving file:", err);
+      console.error("Error serving file:", err);
       res.status(500).send("Error serving the index.html");
     }
   });
-}); 
+});
 
 // Port and Host Configuration
 const port = process.env.PORT || 4001;
