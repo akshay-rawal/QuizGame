@@ -8,6 +8,9 @@ import store from './store/store.js';
 import SessionManager from './utills/sessionInitializer.jsx'; // Ensure this path is correct
 import ThemeProvider from './components/ThemeContext.jsx';
 import { GuestUserProvider } from './guestUser/GuestUserContext.jsx';
+import fs from 'fs';
+console.log(fs.existsSync('./guestUser/GuestUserContext.jsx')); // This should log `true` if the file exists
+
 createRoot(document.getElementById('root')).render(
   <Provider store={store}>
     <Router>
