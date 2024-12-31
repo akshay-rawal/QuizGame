@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axiosInstance from "../utills/axios";
 import { useTheme } from "./ThemeContext";
-import ProtectedRoute from "../guestUser/protectedRoutes";
+import ProtectedRoute from "../guestuser/protectedRoutes";
 const Leaderboard = () => {
  
     const {isDark} = useTheme();

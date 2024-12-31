@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import axiosInstance from "../utills/axios";
 import { useSelector } from "react-redux";
 import { useTheme } from "./ThemeContext";
-import ProtectedRoute from "../guestUser/protectedRoutes";
+import ProtectedRoute from "../guestuser/protectedRoutes";
 
 function CategoryPage() {
   const { token, user } = useSelector((state) => state.user);
