@@ -1,5 +1,7 @@
 {
   "scripts": {
+    "postinstall": "npm install --prefix backend",
+
     "start": "npm run start:backend", 
     "start:backend": "cd backend && cross-env NODE_ENV=production PORT=4001 node index.js",
     "build": "npm run build:frontend", 
