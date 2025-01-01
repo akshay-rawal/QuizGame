@@ -9,7 +9,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:4001',  // Your backend URL
+        target: 'https://quizgame-8.onrender.com',  // Your backend URL
         changeOrigin: true,
         secure: false,
         rewrite: (path) => path.replace(/^\/api/, '')  // Optional rewrite if necessary
