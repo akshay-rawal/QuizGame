@@ -57,6 +57,7 @@ router.post("/signup", async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
+    console.log("Test token generated successfully:", accessToken);
 
     const refreshToken = jwt.sign(
       { userId: user._id },

@@ -28,7 +28,8 @@ try {
 
    
     const accessToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-   
+    console.log("Signed JWT Token:", token);
+
     const refreshToken = jwt.sign({userId:user._id},process.env.JWT_REFRESH_SECRET
 ,{expiresIn:'7d'})
     
